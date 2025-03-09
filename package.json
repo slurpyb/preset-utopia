@@ -39,7 +39,6 @@
   "scripts": {
     "build": "tsup",
     "dev": "tsup --watch",
-    "publish": "",
     "format": "biome format ./src/* --write",
     "lint": "biome lint ./src/*",
     "check": "biome check ./src/* --write"
