@@ -1,7 +1,7 @@
 import { Preset } from '@pandacss/types';
 
 type UtopiaLabelStyle = "utopia" | "tailwind" | "tshirt";
-interface PresetOptions {
+interface UtopiaPresetOptions {
     minFontSize?: number;
     maxFontSize?: number;
     minWidth?: number;
@@ -17,6 +17,6 @@ interface PresetOptions {
     longerShirtLabels?: boolean;
 }
 
-declare function createPreset(options?: PresetOptions): Promise<Preset>;
+declare function createPreset(options?: UtopiaPresetOptions): Promise<Preset>;
 
-export { createPreset as CreateUtopiaPreset, type PresetOptions as UtopiaPresetOptions, createPreset as default };
+export { type UtopiaPresetOptions, createPreset as createUtopiaPreset, createPreset as default };

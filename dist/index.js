@@ -20,7 +20,7 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 // src/index.ts
 var index_exports = {};
 __export(index_exports, {
-  CreateUtopiaPreset: () => createPreset,
+  createUtopiaPreset: () => createPreset,
   default: () => index_default
 });
 module.exports = __toCommonJS(index_exports);
@@ -34,71 +34,54 @@ var defaultOptions = {
   maxFontSize: 19,
   minWidth: 320,
   maxWidth: 1280,
-  minTypeScale: 1.333,
-  maxTypeScale: 1.618,
+  minTypeScale: 1.125,
+  maxTypeScale: 1.333,
   positiveSteps: 11,
   negativeSteps: 4,
-  customSizes: [
-    "s-l",
-    "s-xl",
-    "s-2xl",
-    "xs-m",
-    "m-xl",
-    "m-2xl",
-    "m-3xl",
-    "m-4xl",
-    "l-2xl",
-    "l-3xl",
-    "l-4xl",
-    "l-5xl",
-    "xs-l",
-    "2xl-6xl",
-    "xl-4xl",
-    "xl-6xl",
-    "2xl-4xl",
-    "l-7xl"
-  ],
+  customSizes: [],
   positiveSpacingSteps: [1.5, 3, 4.5, 6, 7.5, 9, 10.5, 12, 13.5],
   negativeSpacingSteps: [0.5, 0.25, 0.125],
   labelStyle: "tshirt",
-  longerShirtLabels: true
+  longerShirtLabels: false
 };
 
 // src/lib/typography.ts
 var import_utopia_core = require("utopia-core");
 
 // src/lib/utils.ts
-var upgradeShirtKey = (key) => {
-  switch (key) {
+var pandaToken = (label, clamp) => ({ [label]: { value: clamp } });
+var extendedLabel = (label, tw) => {
+  switch (label) {
     case "s":
       return "sm";
     case "m":
       return "md";
     case "l":
       return "lg";
+    case "base":
+      return tw ? label : "base";
     default:
-      if (key.startsWith("s-")) {
-        return `sm-${key.slice(2)}`;
-      }
-      if (key.startsWith("m-")) {
-        return `md-${key.slice(2)}`;
-      }
-      if (key.startsWith("l-")) {
-        return `lg-${key.slice(2)}`;
-      }
-      return key;
+      return label;
   }
 };
 
 // src/lib/typography.ts
-var transformStep = (step, labelStyle, longerLabel) => ({
-  [labelStyle === "tshirt" && longerLabel ? upgradeShirtKey(step.label) : step.label]: { value: step.clamp }
-});
+var fontToken = (step, labelStyle, extend) => {
+  switch (labelStyle) {
+    case "tshirt":
+      return pandaToken(extend ? extendedLabel(step.label) : step.label, step.clamp);
+    case "tailwind":
+      return pandaToken(step.label, step.clamp);
+    default:
+      return pandaToken(step.label, step.clamp);
+  }
+};
 var createTypeScaleTokens = (options) => {
-  return (0, import_utopia_core.calculateTypeScale)(options).reduce(
+  const { labelStyle = "utopia", longerShirtLabels = false, ...rest } = options;
+  return (0, import_utopia_core.calculateTypeScale)({ labelStyle, ...rest }).reduce(
     (acc, step) => Object.assign(
       acc,
-      transformStep(step, options.labelStyle, options.longerShirtLabels)
+      fontToken(step, labelStyle, longerShirtLabels)
     ),
     {}
   );
@@ -106,23 +89,51 @@ var createTypeScaleTokens = (options) => {
 
 // src/lib/spacing.ts
 var import_utopia_core2 = require("utopia-core");
-var transformSize = (size, longerLabel) => ({
-  [longerLabel ? upgradeShirtKey(size.label) : size.label]: {
-    value: size.clamp
+var extendedPairLabel = (pair) => {
+  let [fromLabel, toLabel] = pair.split("-");
+  const extendedLabels = {
+    s: "sm",
+    m: "md",
+    l: "lg",
+    base: "md"
+  };
+  fromLabel = extendedLabels[fromLabel] ?? fromLabel;
+  toLabel = extendedLabels[toLabel] ?? toLabel;
+  return `${fromLabel}-${toLabel}`;
+};
+var sizeToken = (size, labelStyle, extend) => {
+  switch (labelStyle) {
+    case "tshirt":
+      return pandaToken(extend ? extendedLabel(size.label) : size.label, size.clamp);
+    case "tailwind":
+      return pandaToken(extendedLabel(size.label, true), size.clamp);
+    default:
+      return pandaToken(size.label, size.clamp);
   }
-});
+};
+var pairToken = (pair, labelStyle, extend) => {
+  switch (labelStyle) {
+    case "tshirt":
+      return pandaToken(extend ? extendedPairLabel(pair.label) : pair.label, pair.clamp);
+    case "tailwind":
+      return pandaToken(extendedPairLabel(pair.label), pair.clamp);
+    default:
+      return pandaToken(pair.label, pair.clamp);
+  }
+};
 var createSpaceScaleTokens = (options) => {
-  const spaceScale = (0, import_utopia_core2.calculateSpaceScale)(options);
+  const { labelStyle = "utopia", longerShirtLabels = false, ...rest } = options;
+  const spaceScale = (0, import_utopia_core2.calculateSpaceScale)(rest);
   const sizesTokens = spaceScale.sizes.reduce(
-    (acc, size) => Object.assign(acc, transformSize(size, options.longerShirtLabels)),
+    (acc, size) => Object.assign(acc, sizeToken(size, labelStyle, longerShirtLabels)),
     {}
   );
   const oneUpPairsTokens = spaceScale.oneUpPairs.reduce(
-    (acc, size) => Object.assign(acc, transformSize(size, options.longerShirtLabels)),
+    (acc, size) => Object.assign(acc, pairToken(size, labelStyle, longerShirtLabels)),
     {}
   );
   const customPairsTokens = spaceScale.customPairs.reduce(
-    (acc, size) => Object.assign(acc, transformSize(size, options.longerShirtLabels)),
+    (acc, size) => Object.assign(acc, pairToken(size, labelStyle, longerShirtLabels)),
     {}
   );
   return Object.assign({}, sizesTokens, oneUpPairsTokens, customPairsTokens);
@@ -156,6 +167,7 @@ async function createPreset(options) {
             negativeSteps: presetOptions.negativeSpacingSteps ?? defaultOptions.negativeSpacingSteps,
             positiveSteps: presetOptions.positiveSpacingSteps ?? defaultOptions.positiveSpacingSteps,
             customSizes: presetOptions.customSizes ?? defaultOptions.customSizes,
+            labelStyle: presetOptions.labelStyle ?? defaultOptions.labelStyle,
             longerShirtLabels: presetOptions.longerShirtLabels ?? defaultOptions.longerShirtLabels
           })
         }
@@ -168,5 +180,5 @@ async function createPreset(options) {
 var index_default = createPreset;
 // Annotate the CommonJS export names for ESM import in node:
 0 && (module.exports = {
-  CreateUtopiaPreset
+  createUtopiaPreset
 });
