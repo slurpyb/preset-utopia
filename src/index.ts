@@ -1,6 +1,6 @@
-import { createPreset as CreateUtopiaPreset } from "./preset";
+import { createPreset as createUtopiaPreset } from "./preset";
 
-export { CreateUtopiaPreset };
-export default CreateUtopiaPreset;
+export { createUtopiaPreset };
+export default createUtopiaPreset;
 
 export type { PresetOptions as UtopiaPresetOptions } from "./options";
