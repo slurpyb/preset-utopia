@@ -68,19 +68,38 @@ var transformStep = (step, labelStyle, longerLabel) => ({
   [labelStyle === "tshirt" && longerLabel ? upgradeShirtKey(step.label) : step.label]: { value: step.clamp }
 });
 var createTypeScaleTokens = (options) => {
-  return calculateTypeScale(options).reduce((acc, step) => Object.assign(acc, transformStep(step, options.labelStyle, options.longerShirtLabels)), {});
+  return calculateTypeScale(options).reduce(
+    (acc, step) => Object.assign(
+      acc,
+      transformStep(step, options.labelStyle, options.longerShirtLabels)
+    ),
+    {}
+  );
 };
 
 // src/lib/spacing.ts
-import { calculateSpaceScale } from "utopia-core";
+import {
+  calculateSpaceScale
+} from "utopia-core";
 var transformSize = (size, longerLabel) => ({
-  [longerLabel ? upgradeShirtKey(size.label) : size.label]: { value: size.clamp }
+  [longerLabel ? upgradeShirtKey(size.label) : size.label]: {
+    value: size.clamp
+  }
 });
 var createSpaceScaleTokens = (options) => {
   const spaceScale = calculateSpaceScale(options);
-  const sizesTokens = spaceScale.sizes.reduce((acc, size) => Object.assign(acc, transformSize(size, options.longerShirtLabels)), {});
-  const oneUpPairsTokens = spaceScale.oneUpPairs.reduce((acc, size) => Object.assign(acc, transformSize(size, options.longerShirtLabels)), {});
-  const customPairsTokens = spaceScale.customPairs.reduce((acc, size) => Object.assign(acc, transformSize(size, options.longerShirtLabels)), {});
+  const sizesTokens = spaceScale.sizes.reduce(
+    (acc, size) => Object.assign(acc, transformSize(size, options.longerShirtLabels)),
+    {}
+  );
+  const oneUpPairsTokens = spaceScale.oneUpPairs.reduce(
+    (acc, size) => Object.assign(acc, transformSize(size, options.longerShirtLabels)),
+    {}
+  );
+  const customPairsTokens = spaceScale.customPairs.reduce(
+    (acc, size) => Object.assign(acc, transformSize(size, options.longerShirtLabels)),
+    {}
+  );
   return Object.assign({}, sizesTokens, oneUpPairsTokens, customPairsTokens);
 };
 
@@ -88,7 +107,7 @@ var createSpaceScaleTokens = (options) => {
 async function createPreset(options) {
   const presetOptions = options ?? defaultOptions;
   return definePreset({
-    name: "@repo/preset-utopia",
+    name: "@slurpyb/preset-utopia",
     theme: {
       extend: {
         tokens: {
@@ -102,7 +121,7 @@ async function createPreset(options) {
             minTypeScale: presetOptions.minTypeScale ?? defaultOptions.minTypeScale,
             maxTypeScale: presetOptions.maxTypeScale ?? defaultOptions.maxTypeScale,
             labelStyle: presetOptions.labelStyle ?? defaultOptions.labelStyle,
-            longerShirtLabels: true
+            longerShirtLabels: presetOptions.longerShirtLabels ?? defaultOptions.longerShirtLabels
           }),
           spacing: createSpaceScaleTokens({
             minSize: presetOptions.minFontSize ?? defaultOptions.minFontSize,
@@ -123,6 +142,6 @@ async function createPreset(options) {
 // src/index.ts
 var index_default = createPreset;
 export {
-  createPreset,
+  createPreset as CreateUtopiaPreset,
   index_default as default
 };
