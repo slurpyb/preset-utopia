@@ -1,21 +1,16 @@
-export const upgradeShirtKey = (key: string) => {
-	switch (key) {
+export const pandaToken = (label: string, clamp: string) => ({[label]: {value: clamp}})
+
+export const extendedLabel = (label: string, tw?: boolean) => {
+	switch (label) {
 		case "s":
 			return "sm";
 		case "m":
 			return "md";
 		case "l":
 			return "lg";
+		case "base":
+			return tw ? label : "base";
 		default:
-			if (key.startsWith("s-")) {
-				return `sm-${key.slice(2)}`;
-			}
-			if (key.startsWith("m-")) {
-				return `md-${key.slice(2)}`;
-			}
-			if (key.startsWith("l-")) {
-				return `lg-${key.slice(2)}`;
-			}
-			return key;
+			return label;
 	}
-};
+}

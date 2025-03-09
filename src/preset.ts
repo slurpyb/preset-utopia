@@ -1,13 +1,13 @@
 import type { Preset } from "@pandacss/types";
 import { definePreset } from "@pandacss/dev";
-import type { PresetOptions, UtopiaLabelStyle } from "./options";
+import type { UtopiaPresetOptions, UtopiaLabelStyle } from "./options";
 
 import { defaultOptions } from "./consts";
 
 import { createTypeScaleTokens } from "./lib/typography";
 import { createSpaceScaleTokens } from "./lib/spacing";
 
-export async function createPreset(options?: PresetOptions): Promise<Preset> {
+export async function createPreset(options?: UtopiaPresetOptions): Promise<Preset> {
 	const presetOptions = options ?? defaultOptions;
 
 	return definePreset({
@@ -50,6 +50,7 @@ export async function createPreset(options?: PresetOptions): Promise<Preset> {
 							defaultOptions.positiveSpacingSteps,
 						customSizes:
 							presetOptions.customSizes ?? defaultOptions.customSizes,
+						labelStyle: (presetOptions.labelStyle as UtopiaLabelStyle) ?? defaultOptions.labelStyle,
 						longerShirtLabels:
 							presetOptions.longerShirtLabels ??
 							defaultOptions.longerShirtLabels,

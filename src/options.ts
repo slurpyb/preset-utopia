@@ -7,9 +7,10 @@ export type CreateTypeScaleOptions = UtopiaTypeConfig & {
 	longerShirtLabels?: boolean;
 };
 export type CreateSpacingScaleOptions = UtopiaSpaceConfig & {
+	labelStyle?: UtopiaLabelStyle;
 	longerShirtLabels?: boolean;
 };
-export interface PresetOptions {
+export interface UtopiaPresetOptions {
 	minFontSize?: number;
 	maxFontSize?: number;
 	minWidth?: number;
