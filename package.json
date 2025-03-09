@@ -1,0 +1,59 @@
+{
+  "name": "@slurpyb/preset-utopia",
+  "version": "1.0.0",
+  "packageManager": "pnpm@10.5.2",
+  "author": "Jordan Sweeting <slurpyb@fastmail.com>",
+  "description": "PandaCSS preset for utopia.fyi / utopia-core set of tools. Create fluid type scales, spacing scales, and more.",
+  "keywords": [
+    "pandacss",
+    "utopia",
+    "preset",
+    "typography",
+    "fluid",
+    "css"
+  ],
+  "main": "./dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/slurpyb/preset-utopia.git"
+  },
+  "bugs": {
+    "url": "https://github.com/slurpyb/preset-utopia/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "publish": "",
+    "format": "biome format ./src/* --write",
+    "lint": "biome lint ./src/*",
+    "check": "biome check ./src/* --write"
+  },
+  "peerDependencies": {
+    "@pandacss/dev": ">=0.50.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.8.2",
+    "@biomejs/biome": "1.9.4",
+    "@pandacss/dev": "^0.53.0",
+    "@pandacss/types": "^0.53.0",
+    "@types/node": "^22.13.8",
+    "tsup": "^8.4.0",
+    "utopia-core": "^1.6.0"
+  }
+}
